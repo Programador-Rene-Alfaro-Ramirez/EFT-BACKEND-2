@@ -81,16 +81,16 @@ public class VentaServiceImpl implements VentaService {
         // 6. Verificar stock
         verificarStockEnVenta(detalles);
         
-        // 7. Calcular total
-        Double total = calcularTotal(detalles);
-        
-        // 8. Crear venta
+        // 7. Crear venta
         Venta venta = new Venta();
         venta.setUsuario(carrito.getUsuario());
         venta.setFecha(new Date());
         venta.setDetalles(detalles);
+        for (DetalleVenta detalle : detalles) {
+            detalle.setVenta(venta);
+        }
         
-        // 9. Actualizar stock
+        // 8. Actualizar stock
         for (DetalleVenta detalle : detalles) {
             inventarioService.registrarMovimiento(
                 detalle.getProducto().getId(),
@@ -99,7 +99,8 @@ public class VentaServiceImpl implements VentaService {
             );
         }
         
-        // 10. Guardar venta
+        // 9. Guardar venta
+        carritoRepository.delete(carrito);
         return ventaRepository.save(venta);
     }
 
@@ -138,7 +139,14 @@ public class VentaServiceImpl implements VentaService {
     // ============ MÉTODO AUXILIAR ============
 
     private List<DetalleVenta> crearDetallesDesdeCarrito(Carrito carrito) {
-        // TODO: Implementar según la relación real de Carrito
-        return new ArrayList<>();
+        List<DetalleVenta> detalles = new ArrayList<>();
+
+        DetalleVenta detalle = new DetalleVenta();
+        detalle.setProducto(carrito.getProducto());
+        detalle.setCantidad(carrito.getCantidad());
+        detalle.setPrecio(carrito.getProducto().getPrecio());
+        detalles.add(detalle);
+
+        return detalles;
     }
 }

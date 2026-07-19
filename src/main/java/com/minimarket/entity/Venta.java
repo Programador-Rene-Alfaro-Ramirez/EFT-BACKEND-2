@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Venta {
     @Id
@@ -18,6 +20,7 @@ public class Venta {
     private Date fecha;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<DetalleVenta> detalles;
 
     // Getters y Setters
